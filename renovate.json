@@ -1,0 +1,8 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "platform": "gitlab",
+  "assignees": [
+    "joshua.neunert"
+  ],
+  "reviewers": []
+}

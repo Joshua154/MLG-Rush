@@ -1,0 +1,58 @@
+colors:
+  - gold: '#FFAA00'
+  - white: '#f2f2f2'
+  - gray: '#AAAAAA'
+  - color1: '#29AF0E'
+  - color2: '#AAAAAA'
+  - prefix: '&x333AFF&lM&xFFFFFF&lL&xEA302E&lG&x999999╺&xf2f2f2&lRush'
+
+chat:
+  prefix: '%prefix%&r '
+  mlgRushName: '%prefix%'
+  serverAddress: '%white%laudynetwork.com'
+
+en_US:
+  scoreBoard:
+    bedsDestroyed: '%white%Team %team%%gray%: (%gold%%beds%%gray%/%gold%%bedsToWin%%gray%)'
+    opBed: '%white%Team %team%%gray%: (%gold%%beds%%gray%/%gold%%bedsToWin%%gray%)'
+    kills: '%white%Kills:     %gold%%kills%'
+    deaths: '%white%Deaths: %gold%%deaths%'
+    waiting: '%white%Waiting for player'
+
+  start:
+    sortYourInventory: '%gold%Sort your inventory!'
+
+  actionBar:
+    space: '     '
+    time: '%gray%Time: %gold%%time%'
+
+  specActionBar:
+    space: '     '
+    time: '&l%gold%%time%'
+
+  game:
+    end: '%gray%Game ended! %player% won!'
+    abort: '%gray%Game ended! %player% has quit!\nNo Stats will be saved'
+
+de_DE:
+  scoreBoard:
+    bedsDestroyed: '%white%Team %team%%gray%: (%gold%%beds%%gray%/%gold%%bedsToWin%%gray%)'
+    opBed: '%white%Team %team%%gray%: (%gold%%beds%%gray%/%gold%%bedsToWin%%gray%)'
+    kills: '%white%Kills: %gold%%kills%'
+    deaths: '%white%Tode: %gold%%deaths%'
+    waiting: '%white%Warte auf Spieler'
+
+  start:
+    sortYourInventory: '%gold%Sortiere dein Inventar!'
+
+  actionBar:
+    space: '     '
+    time: '%gray%Zeit: %gold%%time%'
+
+  specActionBar:
+    space: '     '
+    time: '&l%gold%%time%'
+
+  game:
+    end: '%gray%Spiel beendet! %player% hat gewonnen!'
+    abort: '%gray%Spiel beendet! %player% hat gewonnen!\nEs werden keine Statistiken gespeichert'

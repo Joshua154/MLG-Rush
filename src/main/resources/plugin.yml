@@ -1,0 +1,4 @@
+name: MLGRush
+version: ${project.version}
+main: com.laudynetwork.mlgrush.MLG_Rush
+api-version: 1.19
