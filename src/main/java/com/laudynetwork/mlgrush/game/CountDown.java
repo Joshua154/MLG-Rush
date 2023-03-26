@@ -23,17 +23,14 @@ public class CountDown extends com.laudynetwork.api.countdown.CountDown {
 
     @Override
     public void onEnter() {
-
     }
 
     @Override
     public void onLeave() {
-
     }
 
     @Override
     public void tick(int i) {
-
     }
 
     @Override
