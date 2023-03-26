@@ -18,7 +18,7 @@ dependencies {
 
     paperDevBundle("1.19.3-R0.1-SNAPSHOT")
 
-    implementation("org.jetbrains:annotations:24.0.0")
+    implementation("org.jetbrains:annotations:24.0.1")
 }
 
 repositories {
