@@ -1,14 +1,12 @@
 package com.laudynetwork.api.builder;
 
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.plugin.Plugin;
 
 import java.util.List;
 
@@ -45,12 +43,6 @@ public final class ItemBuilder {
 
     public ItemBuilder addEnchant(Enchantment enchantment, int level, boolean levelRestriction) {
         this.itemMeta.addEnchant(enchantment, level, levelRestriction);
-        return this;
-    }
-
-    public ItemBuilder setGlowingNoEnchant(boolean glowing, Plugin plugin) {
-        NamespacedKey key = new NamespacedKey(plugin, plugin.getDescription().getName());
-        this.itemMeta.addEnchant(new ItemGlow.Glow(key), 1, true);
         return this;
     }
 
