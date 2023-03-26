@@ -10,7 +10,7 @@ build:
     - schedules
   artifacts:
     paths:
-      - ./build/libs/mlgRush-1.0.0.jar
+      - ./build/libs/mlgRush-1.0.0-dev.jar
   variables:
     USERNAME: $NEXUS_USER
     PASSWORD: $NEXUS_PWD
