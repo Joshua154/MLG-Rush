@@ -13,6 +13,8 @@ import com.laudynetwork.mlgrush.game.PlayerStatus;
 import com.laudynetwork.mlgrush.scoreboard.GameScoreBoard;
 import com.laudynetwork.mlgrush.scoreboard.SpecScoreBord;
 import lombok.RequiredArgsConstructor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.GameMode;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
@@ -20,13 +22,15 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
+import java.util.Objects;
+
 @RequiredArgsConstructor
 public class JoinListener implements Listener {
     private final MySQL sql;
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
-        event.setJoinMessage("");
+        event.joinMessage(Component.empty());
         Player player = event.getPlayer();
         player.setGameMode(GameMode.SPECTATOR);
 
@@ -52,7 +56,7 @@ public class JoinListener implements Listener {
                     "uuid='" + event.getPlayer().getUniqueId() + "'")
             );
 
-            player.getAttribute(Attribute.GENERIC_ATTACK_SPEED).setBaseValue(100);
+            //Objects.requireNonNull(player.getAttribute(Attribute.GENERIC_ATTACK_SPEED)).setBaseValue(100);
 
 
             //String message = MLG_Rush.get().getTranslations().get(MLG_Rush.get().playerLanguages.get(player)).getTranslation("game.join");
@@ -68,7 +72,7 @@ public class JoinListener implements Listener {
             new GameScoreBoard(player, game);
             new PlayerGameInfo(player);
 
-            player.setPlayerListName(HexColor.translate(Colors.getHexColor(MLG_Rush.get().getGame().getPlayer(player).color)) + player.getName());
+            player.playerListName(MiniMessage.miniMessage().deserialize(Colors.getHexColor(MLG_Rush.get().getGame().getPlayer(player).color) + player.getName()));
         } else {
             /*Document doc = new Document("state", PlayerStatus.MLG_Spec.toString());
 

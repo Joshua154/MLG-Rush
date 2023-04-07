@@ -7,6 +7,7 @@ import com.laudynetwork.mlgrush.MLG_Rush;
 import com.laudynetwork.mlgrush.game.Game;
 import com.laudynetwork.mlgrush.game.PlayerStatus;
 import lombok.RequiredArgsConstructor;
+import net.kyori.adventure.text.Component;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -17,7 +18,7 @@ public class LeaveListener implements Listener {
 
     @EventHandler
     public void onLeave(PlayerQuitEvent event) {
-        event.setQuitMessage("");
+        event.quitMessage(Component.empty());
         Game game = MLG_Rush.get().getGame();
 
         /*Document doc = new Document("status", PlayerStatus.Lobby.toString());

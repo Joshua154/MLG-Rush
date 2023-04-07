@@ -15,19 +15,16 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class GameScoreBoard extends ScoreboardBuilder {
-    private final String mainColor = MLG_Rush.get().getColors().get("mainColor");
     private final String highlight = MLG_Rush.get().getColors().get("highlight");
-    private final Player player;
     private final Game game;
     PlayerManager playerManager;
 
 
     public GameScoreBoard(Player player, Game game) {
         super(player, MiniMessage.miniMessage().deserialize(MLG_Rush.get().getColors().get("MLGRush-Prefix")));
-        this.player = player;
         this.game = game;
 
-        playerManager = game.getPlayer(this.player);
+        playerManager = game.getPlayer(player);
 
         player.setScoreboard(getPlayerBoard());
     }
