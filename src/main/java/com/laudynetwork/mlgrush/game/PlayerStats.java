@@ -1,8 +1,14 @@
 package com.laudynetwork.mlgrush.game;
 
+import com.laudynetwork.database.mysql.MySQL;
+import com.laudynetwork.database.mysql.SQLWrapper;
+import com.laudynetwork.database.mysql.utils.Insert;
+import com.laudynetwork.database.mysql.utils.Row;
+import com.laudynetwork.database.mysql.utils.Select;
 import com.laudynetwork.mlgrush.MLG_Rush;
 
 public class PlayerStats {
+    private final MySQL sql;
     private final PlayerManager pm;
     private int kills;
     private int deaths;
@@ -11,22 +17,23 @@ public class PlayerStats {
     private int roundsWon;
     private int roundsPlayed;
 
-    public PlayerStats(PlayerManager pm) {
+    public PlayerStats(PlayerManager pm, MySQL sql) {
         this.pm = pm;
+        this.sql = sql;
 
         //Document document = MongoManager.getInstance().getDatabase().getCollection("mlgRush").find(Filters.eq("_id", pm.player.getUniqueId().toString())).first();
 
-        String document = null;
+        if (sql.rowExist(new Select("minecraft_mlgrush_stats", "uuid", pm.player.getUniqueId().toString()))) {
+            Row result = sql.rowSelect(new Select()).getRows().get(0);
 
-        if (document != null) {
-            /*this.kills = document.getInteger("kills");
-            this.deaths = document.getInteger("deaths");
-            this.bedsDestroyed = document.getInteger("bedsDestroyed");
-            this.timePlayed = document.getInteger("timePlayed");
-            this.roundsWon = document.getInteger("roundsWon");
-            this.roundsPlayed = document.getInteger("roundsPlayed");
-            pm.color = document.getString("selectedColor");
-            pm.invOrder = document.getList("inventoryOrder", String.class);*/
+            this.kills = (int) result.get("kills");
+            this.deaths = (int) result.get("deaths");
+            this.bedsDestroyed = (int) result.get("bedsDestroyed");
+            this.timePlayed = (int) result.get("timePlayed");
+            this.roundsWon = (int) result.get("roundsWon");
+            this.roundsPlayed = (int) result.get("roundsPlayed");
+            pm.color = (String) result.get("selectedColor");
+            pm.invOrder = SQLWrapper.fromStringToList((String) result.get("inventoryOrder"));
         } else {
             this.kills = 0;
             this.deaths = 0;
@@ -34,15 +41,7 @@ public class PlayerStats {
             this.timePlayed = 0;
             this.roundsWon = 0;
             this.roundsPlayed = 0;
-            if (pm.player.getName() == "LaudyTV") {
-                pm.color = "magenta";
-            } else if (pm.player.getName() == "DreamMon") {
-                pm.color = "black";
-            } else if (pm.player.getName() == "TimetraveIIer") {
-                pm.color = "light_gray";
-            } else {
-                pm.color = defaultColors.values()[0].name();
-            }
+            pm.color = defaultColors.values()[0].name();
         }
 
         if (MLG_Rush.get().getGame().getOpponent(pm.player) != null) {
@@ -75,10 +74,23 @@ public class PlayerStats {
         document.append("roundsWon", roundsWon);
         document.append("roundsPlayed", roundsPlayed);
         document.append("selectedColor", pm.color);
-        document.append("inventoryOrder", pm.invOrder);
+        document.append("inventoryOrder", pm.invOrder);*/
 
-        MongoManager.getInstance().getDatabase().getCollection("mlgRush").replaceOne(Filters.eq("_id", pm.player.getUniqueId().toString()), document, new ReplaceOptions().upsert(true));
-*/
+        /*sqlConnection.insert("minecraft_mlgrush_stats",
+                new SQLConnection.DataColumn("uuid", pm.player.getUniqueId().toString()),
+                new SQLConnection.DataColumn("kills", kills),
+                new SQLConnection.DataColumn("deaths", deaths),
+                new SQLConnection.DataColumn("bedsDestroyed", bedsDestroyed),
+                new SQLConnection.DataColumn("timePlayed", timePlayed),
+                new SQLConnection.DataColumn("roundsWon", roundsWon),
+                new SQLConnection.DataColumn("roundsPlayed", roundsPlayed),
+                new SQLConnection.DataColumn("selectedColor", pm.color),
+                new SQLConnection.DataColumn("inventoryOrder", SQLWrapper.fromListToString(pm.invOrder))
+        );*/
+
+        sql.tableInsert(new Insert("minecraft_mlgrush_stats",
+                "uuid, kills, deaths, bedsDestroyed, timePlayed, roundsWon, roundsPlayed, selectedColor, inventoryOrder",
+                pm.player.getUniqueId(), kills, deaths, bedsDestroyed, timePlayed, roundsWon, roundsPlayed, pm.color, SQLWrapper.fromListToString(pm.invOrder)));
     }
 
     public void syncFromPM() {

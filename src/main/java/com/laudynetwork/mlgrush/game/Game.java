@@ -2,9 +2,13 @@ package com.laudynetwork.mlgrush.game;
 
 import com.laudynetwork.api.chatutils.HexColor;
 import com.laudynetwork.api.chatutils.TextUtils;
+import com.laudynetwork.database.mysql.MySQL;
 import com.laudynetwork.mlgrush.MLG_Rush;
 import com.laudynetwork.mlgrush.timer.Timer;
 import com.laudynetwork.mlgrush.timer.TimerMode;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
@@ -18,6 +22,7 @@ import java.util.List;
 public class Game {
     public final int falldistance = 10;
     public final int bedsToWin = 10;
+    private final MySQL sql;
     private final int lobbycountdownTime = 5;
     private final Location SpectatorSpawnLocation;
     public PlayerManager player1 = null;
@@ -34,7 +39,8 @@ public class Game {
     Timer timer = new Timer(false, 0, TimerMode.COUNTUP);
     private int round = 0;
 
-    public Game() {
+    public Game(MySQL sql) {
+        this.sql = sql;
         SpectatorSpawnLocation = center.clone().add(0, 5, 10);
         SpectatorSpawnLocation.setYaw(180);
         SpectatorSpawnLocation.setPitch(30);
@@ -102,10 +108,13 @@ public class Game {
             player.teleport(SpectatorSpawnLocation);
             player.setGameMode(GameMode.SPECTATOR);
 
-
-            String message = "Game ended! {{player}} won!";
-            message = message.replace("{{player}}", MLG_Rush.get().getColors().get("highlight") + wonPlayer.player.getName() + MLG_Rush.get().getColors().get("mainColor"));
-            player.sendMessage(HexColor.translate(MLG_Rush.get().getColors().get("mainColor") + message));
+            player.sendMessage(
+                    MiniMessage.miniMessage().deserialize(MLG_Rush.get().getColors().get("mainColor") + "Game ended! <player> won!",
+                            Placeholder.component("player",
+                                    Component.text(MLG_Rush.get().getColors().get("highlight") + wonPlayer.player.getName())
+                            )
+                    )
+            );
         });
 
         stopServer();
@@ -119,11 +128,17 @@ public class Game {
             player.teleport(SpectatorSpawnLocation);
             player.setGameMode(GameMode.SPECTATOR);
 
-            String message = "Game ended! {{player}} has quit!\nNo Stats will be saved";
+            String message = "Game ended! <player> has quit!\nNo Stats will be saved";
             player.sendMessage(HexColor.translate(MLG_Rush.get().getColors().get("mainColor") + message));
             for (String s : message.split("\\n")) {
                 s = s.replace("\n", "");
-                player.sendMessage(HexColor.translate(s.replace("{{player}}", MLG_Rush.get().getColors().get("highlight") + quitPlayer.getName() + MLG_Rush.get().getColors().get("mainColor"))));
+                player.sendMessage(
+                        MiniMessage.miniMessage().deserialize(MLG_Rush.get().getColors().get("mainColor") + s,
+                                Placeholder.component("player",
+                                        Component.text(MLG_Rush.get().getColors().get("highlight") + quitPlayer.getName())
+                                )
+                        )
+                );
             }
         });
         stopServer();
@@ -142,12 +157,12 @@ public class Game {
     public PlayerManager addPlayer(Player player) {
         if (this.player1 == null) {
             this.player1 = new PlayerManager(player, true);
-            this.player1Stats = new PlayerStats(player1);
+            this.player1Stats = new PlayerStats(player1, sql);
             player1.setUp();
             return this.player1;
         } else if (this.player2 == null) {
             this.player2 = new PlayerManager(player, false);
-            this.player2Stats = new PlayerStats(player2);
+            this.player2Stats = new PlayerStats(player2, sql);
             player2.setUp();
             return this.player1;
         }

@@ -1,35 +1,35 @@
 package com.laudynetwork.mlgrush.scoreboard;
 
-import com.laudynetwork.api.chatutils.HexColor;
-import com.laudynetwork.mlgrush.Colors;
 import com.laudynetwork.mlgrush.MLG_Rush;
 import com.laudynetwork.mlgrush.game.Game;
 import com.laudynetwork.mlgrush.game.PlayerManager;
-import org.bukkit.ChatColor;
+import com.laudynetwork.networkutils.api.scoreboard.ScoreboardBuilder;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
-import java.awt.*;
-import java.awt.font.FontRenderContext;
-import java.awt.geom.AffineTransform;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class GameScoreBoard extends ScoreBoardBuilder {
-
-    private static int animationFrame = 0;
+public class GameScoreBoard extends ScoreboardBuilder {
     private final String mainColor = MLG_Rush.get().getColors().get("mainColor");
     private final String highlight = MLG_Rush.get().getColors().get("highlight");
-    Game game = MLG_Rush.get().getGame();
-    PlayerManager playerManager = null;
+    private final Player player;
+    private final Game game;
+    PlayerManager playerManager;
 
 
-    public GameScoreBoard(Player player) {
-        super(player, HexColor.translate(MLG_Rush.get().getColors().get("MLGRush-Prefix")));
+    public GameScoreBoard(Player player, Game game) {
+        super(player, MiniMessage.miniMessage().deserialize(MLG_Rush.get().getColors().get("MLGRush-Prefix")));
+        this.player = player;
+        this.game = game;
 
-        playerManager = game.getPlayer(player);
+        playerManager = game.getPlayer(this.player);
 
-        run();
+        player.setScoreboard(getPlayerBoard());
     }
 
     private static String getCurrentDate() {
@@ -39,80 +39,72 @@ public class GameScoreBoard extends ScoreBoardBuilder {
     }
 
     @Override
-    public void update() {
+    public void createBoard() {
+        for (int i = 1; i < 9; i++) {
+            setLine(Component.text(""), i);
+        }
 
+        setLine(Component.text(getCurrentDate()).color(NamedTextColor.GRAY), 9);
+
+        setLine(MiniMessage.miniMessage().deserialize(MLG_Rush.get().getColors().get("mainColor") + MLG_Rush.get().getColors().get("serverAddress")), 1);
+
+        Bukkit.getScheduler().runTaskTimer(MLG_Rush.get(), this::update, 0L, 20L);
     }
 
     @Override
-    public void createScoreboard() {
-        //Date ServerID
-        setScore(ChatColor.GRAY + getCurrentDate(), 8);
+    public void update() {
+        setLine(MiniMessage.miniMessage().deserialize(
+                "Team <team>: (<beds>/<beds_to_win>)",
+                Placeholder.component("beds",
+                        Component.text(highlight + playerManager.getBedsDestroyed())
+                ),
+                Placeholder.component("beds_to_win",
+                        Component.text(highlight + game.bedsToWin)
+                ),
+                Placeholder.component("team",
+                        Component.text(playerManager.color + getTeamName(playerManager.color))
+                )
+        ), 7);
 
-        emptyLine(7);
-
-        emptyLine(1);
-
-        setScore(HexColor.translate(MLG_Rush.get().getColors().get("mainColor") + MLG_Rush.get().getColors().get("serverAddress")), 0);
-    }
-
-    private void run() {
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                if (game.player1 != null && game.player2 != null) {
-                    emptyLine(4);
-                    Font font = new Font("Arial", Font.PLAIN, 2);
-                    FontRenderContext frc = new FontRenderContext(new AffineTransform(), true, true);
-
-                    //int deathLength = (int)(font.getStringBounds(MLG_Rush.get().getTranslations().get(MLG_Rush.get().playerLanguages.get(player)).getTranslation("scoreBoard.deaths").replace("{{deaths}}", ""), frc).getWidth());
-                    //int killLength = (int)(font.getStringBounds(MLG_Rush.get().getTranslations().get(MLG_Rush.get().playerLanguages.get(player)).getTranslation("scoreBoard.kills").replace("{{kills}}", ""), frc).getWidth());
-                    int deathLength = (int) (font.getStringBounds(("Deaths: {{deaths}}").replace("{{deaths}}", ""), frc).getWidth());
-                    int killLength = (int) (font.getStringBounds(("Kills: {{kills}}").replace("{{kills}}", ""), frc).getWidth());
-                    int space;
-                    if (deathLength > killLength) {
-                        space = deathLength - killLength;
-                    } else {
-                        space = -(killLength - deathLength);
-                    }
-
-                    String scoreBordText = "Team {{team}}: ({{beds}}/{{bedsToWin}})";
-                    scoreBordText = scoreBordText
-                            .replace("{{beds}}", highlight + playerManager.getBedsDestroyed() + mainColor)
-                            .replace("{{bedsToWin}}", highlight + game.bedsToWin + mainColor)
-                            .replace("{{team}}", Colors.getHexColor(playerManager.color) + "&l" + getTeamName(playerManager.color) + mainColor);
-                    setScore(HexColor.translate(mainColor + scoreBordText), 6);
+        setLine(MiniMessage.miniMessage().deserialize(
+                "Team <team>: (<beds>/<beds_to_win>)",
+                Placeholder.component("beds",
+                        Component.text(highlight + game.getOpponent(playerManager.getPlayer()).getBedsDestroyed())
+                ),
+                Placeholder.component("beds_to_win",
+                        Component.text(highlight + game.bedsToWin)
+                ),
+                Placeholder.component("team",
+                        Component.text(game.getOpponent(playerManager.getPlayer()).color + getTeamName(game.getOpponent(playerManager.getPlayer()).color))
+                )
+        ), 6);
 
 
-                    scoreBordText = "Team {{team}}: ({{beds}}/{{bedsToWin}})";
-                    scoreBordText = scoreBordText
-                            .replace("{{beds}}", highlight + game.getOpponent(playerManager.getPlayer()).getBedsDestroyed() + mainColor)
-                            .replace("{{bedsToWin}}", highlight + game.bedsToWin + mainColor)
-                            .replace("{{team}}", Colors.getHexColor(game.getOpponent(playerManager.getPlayer()).color) + "&l" + getTeamName(game.getOpponent(playerManager.getPlayer()).color) + mainColor);
-                    setScore(HexColor.translate(mainColor + scoreBordText), 5);
+        if (game.player1 != null && game.player2 != null) {
+            setLine(Component.text(""), 5);
+        } else {
+            setLine(MiniMessage.miniMessage().deserialize("Waiting for Opponent"), 5);
+        }
 
+        setLine(MiniMessage.miniMessage().deserialize(
+                "Kills:  <kills>",
+                Placeholder.component("kills",
+                        Component.text(highlight + playerManager.getKills())
+                )
+        ), 4);
 
-                    scoreBordText = "Kills: {{kills}}";
-                    scoreBordText = scoreBordText
-                            .replace("{{kills}}", " ".repeat(Math.max(space, 0)) + highlight + playerManager.getKills() + mainColor);
-                    setScore(HexColor.translate(mainColor + scoreBordText), 3);
-
-
-                    scoreBordText = "Deaths: {{deaths}}";
-                    scoreBordText = scoreBordText
-                            .replace("{{deaths}}", " ".repeat(Math.min(space, 0)) + highlight + playerManager.getDeaths() + mainColor);
-                    setScore(HexColor.translate(mainColor + scoreBordText), 2);
-                } else {
-                    String str = "Waiting for Opponent";
-                    setScore(HexColor.translate(mainColor + str), 4);
-                }
-            }
-        }.runTaskTimer(MLG_Rush.get(), 0, 1L);
+        setLine(MiniMessage.miniMessage().deserialize(
+                "Deaths: <deaths>",
+                Placeholder.component("deaths",
+                        Component.text(highlight + playerManager.getDeaths())
+                )
+        ), 3);
     }
 
     private String getTeamName(String team) {
         String teamStr = team.substring(0, 1).toUpperCase() + team.substring(1).toLowerCase();
         for (String str : teamStr.split("_")) {
-            teamStr = teamStr.replace(str, str.substring(0, 1).toUpperCase() + str.substring(1).toLowerCase()).replace("_", " ");
+            teamStr = teamStr.replace(str, str.substring(0, 1).toUpperCase() + str.substring(1).toLowerCase()).replaceAll("_", " ");
         }
         return teamStr;
     }

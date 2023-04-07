@@ -1,12 +1,20 @@
 package com.laudynetwork.mlgrush.listener;
 
+import com.laudynetwork.database.mysql.MySQL;
+import com.laudynetwork.database.mysql.utils.Update;
+import com.laudynetwork.database.mysql.utils.UpdateValue;
 import com.laudynetwork.mlgrush.MLG_Rush;
 import com.laudynetwork.mlgrush.game.Game;
+import com.laudynetwork.mlgrush.game.PlayerStatus;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+@RequiredArgsConstructor
 public class LeaveListener implements Listener {
+    private final MySQL sql;
+
     @EventHandler
     public void onLeave(PlayerQuitEvent event) {
         event.setQuitMessage("");
@@ -18,6 +26,11 @@ public class LeaveListener implements Listener {
                 Filters.eq("_id", event.getPlayer().getUniqueId().toString()),
                 new Document("$set", doc)
         );*/
+
+        sql.rowUpdate(new Update("minecraft_general_playerData",
+                new UpdateValue("status", PlayerStatus.Lobby),
+                "uuid='" + event.getPlayer().getUniqueId() + "'")
+        );
 
         if (game.getPlayer(event.getPlayer()) != null) {
             /*String lang = "en_US";

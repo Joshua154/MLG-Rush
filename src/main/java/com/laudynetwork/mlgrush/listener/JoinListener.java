@@ -1,13 +1,18 @@
 package com.laudynetwork.mlgrush.listener;
 
 import com.laudynetwork.api.chatutils.HexColor;
+import com.laudynetwork.database.mysql.MySQL;
+import com.laudynetwork.database.mysql.utils.Update;
+import com.laudynetwork.database.mysql.utils.UpdateValue;
 import com.laudynetwork.mlgrush.Colors;
 import com.laudynetwork.mlgrush.MLG_Rush;
 import com.laudynetwork.mlgrush.actionbar.PlayerGameInfo;
 import com.laudynetwork.mlgrush.game.Game;
 import com.laudynetwork.mlgrush.game.PlayerManager;
+import com.laudynetwork.mlgrush.game.PlayerStatus;
 import com.laudynetwork.mlgrush.scoreboard.GameScoreBoard;
 import com.laudynetwork.mlgrush.scoreboard.SpecScoreBord;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.GameMode;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
@@ -15,9 +20,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
+@RequiredArgsConstructor
 public class JoinListener implements Listener {
+    private final MySQL sql;
+
     @EventHandler
-    public void onJoin(PlayerJoinEvent event) throws NoSuchFieldException, IllegalAccessException {
+    public void onJoin(PlayerJoinEvent event) {
         event.setJoinMessage("");
         Player player = event.getPlayer();
         player.setGameMode(GameMode.SPECTATOR);
@@ -39,6 +47,11 @@ public class JoinListener implements Listener {
             );*/
 
 
+            sql.rowUpdate(new Update("minecraft_general_playerData",
+                    new UpdateValue("status", PlayerStatus.MLG_Playing),
+                    "uuid='" + event.getPlayer().getUniqueId() + "'")
+            );
+
             player.getAttribute(Attribute.GENERIC_ATTACK_SPEED).setBaseValue(100);
 
 
@@ -51,7 +64,8 @@ public class JoinListener implements Listener {
 
             game.updatePlayer();
 
-            new GameScoreBoard(player);
+            //new oldGameScoreBoard(player);
+            new GameScoreBoard(player, game);
             new PlayerGameInfo(player);
 
             player.setPlayerListName(HexColor.translate(Colors.getHexColor(MLG_Rush.get().getGame().getPlayer(player).color)) + player.getName());
@@ -63,7 +77,12 @@ public class JoinListener implements Listener {
                     new Document("$set", doc)
             );*/
 
-            new SpecScoreBord(player);
+            sql.rowUpdate(new Update("minecraft_general_playerData",
+                    new UpdateValue("status", PlayerStatus.MLG_Spec),
+                    "uuid='" + event.getPlayer().getUniqueId() + "'")
+            );
+
+            new SpecScoreBord(player, game);
 
 
             String message = "You are now spectating the game";

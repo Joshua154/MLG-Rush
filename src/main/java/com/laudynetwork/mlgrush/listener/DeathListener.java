@@ -27,9 +27,10 @@ public class DeathListener implements Listener {
         player.setFoodLevel(20);
         if (event.getCause() != EntityDamageEvent.DamageCause.FALL) {
             event.setDamage(0);
-            //event.setCancelled(true);
-            //player.setVelocity(player.getVelocity().add((player.getLocation().getDirection().multiply(1.6d).setY(1.0d))));
-            /*if(event instanceof EntityDamageByEntityEvent){
+
+            /*event.setCancelled(true);
+            player.setVelocity(player.getVelocity().add((player.getLocation().getDirection().multiply(1.6d).setY(1.0d))));
+            if(event instanceof EntityDamageByEntityEvent){
                 Entity attacker = ((EntityDamageByEntityEvent)event).getDamager();
                 KnockBack.applyKnockback(player, attacker, 0);
             }*/

@@ -22,6 +22,7 @@ public class KnockBack {
             dist += random.nextDouble() * 8.4 - 0.2; // adds or subtract 0.2 to the distance
             int knockBackLevel = getKnockBackLevel(attacker);
             dist += 3 * knockBackLevel;
+//            dist += 100 * knockBackLevel;
             if (reducedKnockback.contains(livingEntity.getType())) {
                 dist *= 0.5;
             }

@@ -7,6 +7,7 @@ package com.laudynetwork.mlgrush;
 //import com.comphenix.protocol.events.PacketAdapter;
 //import com.comphenix.protocol.events.PacketEvent;
 
+import com.laudynetwork.database.mysql.MySQL;
 import com.laudynetwork.mlgrush.game.Game;
 import com.laudynetwork.mlgrush.listener.*;
 import org.bukkit.Bukkit;
@@ -26,6 +27,10 @@ public final class MLG_Rush extends JavaPlugin {
     //@Getter
     //private final Map<LanguageKey, Translation> translations = new HashMap<>();
     Game game;
+    /*private MessageBackend messageBackend;
+    @Getter
+    private SQLConnection sqlConnection;*/
+    private MySQL sql;
 
     public static MLG_Rush get() {
         return instance;
@@ -42,18 +47,31 @@ public final class MLG_Rush extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        this.sql = new MySQL();
+
+        sql.setHost("localhost");
+        sql.setUser("root");
+        sql.setPassword("uZkg8vBL2psZ4M9NWZ93");
+        sql.setDb("laudynetwork");
+
+        sql.connect();
+
         /*for(LanguageKey languageKey : LanguageKey.values()) {
             translations.put(languageKey, new Translation("62f196dd49346b5832da6bac", languageKey));
-        }*/
+        }
 
-        /*for(Document doc : MongoManager.getInstance().getDatabase().getCollection("colors").find()){
+        for(Document doc : MongoManager.getInstance().getDatabase().getCollection("colors").find()){
             colors.put(doc.get("_id").toString(), doc.get("colorCode").toString());
         }*/
-        colors.put("mainColor", "#CCCCCC");
-        colors.put("highlight", "#FF4F4F");
-        colors.put("MLGRush-Prefix", "&x333AFF&lM&xFFFFFF&lL&xEA302E&lG&x999999-&xf2f2f2&lRush");
+
+        colors.put("mainColor", "<#CCCCCC>");
+        colors.put("highlight", "<#FF4F4F>");
+        colors.put("MLGRush-Prefix", "<bold><#333AFF>M<#FFFFFF>L<#EA302E>G<#999999>-<#f2f2f2>Rush");
         colors.put("serverAddress", "laudynetwork.com");
 
+        /*SQLConnection dbConnection = NetworkUtils.getINSTANCE().getDbConnection();
+        this.messageBackend = new MessageBackend(dbConnection, "mlg-rush");
+        this.sqlConnection = messageBackend.getConnection();*/
 
         PluginManager manager = Bukkit.getPluginManager();
         manager.registerEvents(new BlockBreakListener(), this);
@@ -62,8 +80,8 @@ public final class MLG_Rush extends JavaPlugin {
         manager.registerEvents(new FoodLevelChange(), this);
         manager.registerEvents(new InteractListener(), this);
         manager.registerEvents(new ItemDropListener(), this);
-        manager.registerEvents(new JoinListener(), this);
-        manager.registerEvents(new LeaveListener(), this);
+        manager.registerEvents(new JoinListener(sql), this);
+        manager.registerEvents(new LeaveListener(sql), this);
         manager.registerEvents(new MoveListener(), this);
 
 
@@ -92,12 +110,13 @@ public final class MLG_Rush extends JavaPlugin {
             }
         });*/
 
-        game = new Game();
+        game = new Game(sql);
     }
 
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+        sql.close();
     }
 
     public Game getGame() {

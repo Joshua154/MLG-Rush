@@ -4,6 +4,9 @@ import com.laudynetwork.api.chatutils.HexColor;
 import com.laudynetwork.mlgrush.MLG_Rush;
 import com.laudynetwork.mlgrush.game.Game;
 import com.laudynetwork.mlgrush.game.PlayerManager;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.md_5.bungee.api.ChatMessageType;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -18,7 +21,7 @@ public class PlayerGameInfo {
 
     public PlayerGameInfo(Player player) {
         playerManager = game.getPlayer(player);
-        this.message = "Time: {{time}}";
+        this.message = "Time: <time>";
         run();
     }
 
@@ -27,8 +30,14 @@ public class PlayerGameInfo {
             @Override
             public void run() {
                 if (game.isRunning) {
-                    String str = mainColor + message.replace("{{time}}", highlight + game.getTime() + mainColor);
-                    playerManager.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, HexColor.asTextComponent(str));
+                    Component timerComponent = MiniMessage.miniMessage().deserialize(mainColor + message,
+                            Placeholder.component("time", Component.text(highlight + game.getTime() + mainColor))
+                    );
+
+
+                    playerManager.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, HexColor.asTextComponent("test"));
+
+                    //playerManager.getPlayer().sendMessage(timerComponent);
                 }
             }
         }.runTaskTimer(MLG_Rush.get(), 0, 1L);

@@ -1,4 +1,6 @@
 name: MLGRush
 version: ${project.version}
 main: com.laudynetwork.mlgrush.MLG_Rush
+depend: [ NetworkUtils ]
+authors: [ TimetraveIIer ]
 api-version: 1.19
