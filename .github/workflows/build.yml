@@ -2,10 +2,7 @@ name: Java CI/CD
 
 on:
   push:
-    branches:
-      - main
-  schedule:
-    - cron: '0 0 * * *' # Run every day at midnight
+  pull_request:
 
 jobs:
   build:
@@ -25,8 +22,3 @@ jobs:
       env:
         NEXUS_USER: ${{ secrets.NEXUS_USER }}
         NEXUS_PWD: ${{ secrets.NEXUS_PWD }}
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v2
-      with:
-        name: proxyaddon-latest-all.jar
-        path: ./build/libs/proxyaddon-latest-all.jar
