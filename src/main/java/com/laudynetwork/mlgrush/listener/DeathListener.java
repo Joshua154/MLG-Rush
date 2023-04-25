@@ -1,10 +1,13 @@
 package com.laudynetwork.mlgrush.listener;
 
+import com.laudynetwork.api.knockback.KnockBack;
 import com.laudynetwork.mlgrush.MLG_Rush;
 import com.laudynetwork.mlgrush.game.Game;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 
 public class DeathListener implements Listener {

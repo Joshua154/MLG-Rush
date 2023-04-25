@@ -4,14 +4,13 @@ import com.laudynetwork.api.chatutils.HexColor;
 import com.laudynetwork.database.mysql.MySQL;
 import com.laudynetwork.database.mysql.utils.Update;
 import com.laudynetwork.database.mysql.utils.UpdateValue;
-import com.laudynetwork.mlgrush.Colors;
 import com.laudynetwork.mlgrush.MLG_Rush;
 import com.laudynetwork.mlgrush.actionbar.PlayerGameInfo;
 import com.laudynetwork.mlgrush.game.Game;
 import com.laudynetwork.mlgrush.game.PlayerManager;
 import com.laudynetwork.mlgrush.game.PlayerStatus;
 import com.laudynetwork.mlgrush.scoreboard.GameScoreBoard;
-import com.laudynetwork.mlgrush.scoreboard.SpecScoreBord;
+import com.laudynetwork.mlgrush.scoreboard.SpecScoreBoard;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -66,10 +65,10 @@ public class JoinListener implements Listener {
             game.updatePlayer();
 
             //new oldGameScoreBoard(player);
-            new GameScoreBoard(player, game);
+            new GameScoreBoard(MLG_Rush.get(), MLG_Rush.get().getScoreboardLibrary(), player);
             new PlayerGameInfo(player);
 
-            player.playerListName(MiniMessage.miniMessage().deserialize(Colors.getHexColor(MLG_Rush.get().getGame().getPlayer(player).color) + player.getName()));
+            player.playerListName(MiniMessage.miniMessage().deserialize("<" + game.getPlayer(player).color + ">" + player.getName()));
         } else {
             /*Document doc = new Document("state", PlayerStatus.MLG_Spec.toString());
 
@@ -83,7 +82,7 @@ public class JoinListener implements Listener {
                     "uuid='" + event.getPlayer().getUniqueId() + "'")
             );
 
-            new SpecScoreBord(player, game);
+            new SpecScoreBoard(MLG_Rush.get(), MLG_Rush.get().getScoreboardLibrary(), player);
 
 
             String message = "You are now spectating the game";

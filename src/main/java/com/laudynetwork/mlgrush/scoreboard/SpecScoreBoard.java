@@ -2,9 +2,6 @@ package com.laudynetwork.mlgrush.scoreboard;
 
 import com.laudynetwork.mlgrush.MLG_Rush;
 import com.laudynetwork.mlgrush.game.Game;
-import com.laudynetwork.mlgrush.game.PlayerManager;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.megavex.scoreboardlibrary.api.ScoreboardLibrary;
@@ -19,23 +16,20 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GameScoreBoard extends AbstractSidebar {
+public class SpecScoreBoard extends AbstractSidebar {
 
     private final String mainColor = MLG_Rush.get().getColors().get("mainColor");
     private final String highlight = MLG_Rush.get().getColors().get("highlight");
     Game game = MLG_Rush.get().getGame();
     private final List<DynamicLine> dynamicLines = new ArrayList<>();
     private final BukkitTask task;
-    PlayerManager playerManager;
 
 
-    public GameScoreBoard(@NotNull Plugin plugin, @NotNull ScoreboardLibrary scoreboardLibrary, @NotNull Player player) {
+    public SpecScoreBoard(@NotNull Plugin plugin, @NotNull ScoreboardLibrary scoreboardLibrary, @NotNull Player player) {
         super(scoreboardLibrary.createSidebar(8));
 
-        playerManager = game.getPlayer(player);
-
         sidebar.title(MiniMessage.miniMessage().deserialize(MLG_Rush.get().getColors().get("MLGRush-Prefix")));
-        registerStaticLine(7, Component.text(getCurrentDate()).color(NamedTextColor.GRAY));
+        registerEmptyLine(7);
         registerEmptyLine(4);
         registerEmptyLine(1);
 
@@ -70,14 +64,14 @@ public class GameScoreBoard extends AbstractSidebar {
         dynamicLines.add(registerDynamicLine(3, () -> MiniMessage.miniMessage().deserialize(
                 "Kills:  <kills>",
                 Placeholder.component("kills",
-                        MiniMessage.miniMessage().deserialize(highlight + playerManager.getKills())
+                        MiniMessage.miniMessage().deserialize("<" + game.player1.color + ">" + game.player1.getKills() + "<" + game.player2.color + ">" + game.player2.getKills() + mainColor)
                 )
         )));
 
         dynamicLines.add(registerDynamicLine(2, () -> MiniMessage.miniMessage().deserialize(
                 "Deaths: <deaths>",
                 Placeholder.component("deaths",
-                        MiniMessage.miniMessage().deserialize(highlight + playerManager.getDeaths())
+                        MiniMessage.miniMessage().deserialize("<" + game.player1.color + ">" + game.player1.getDeaths() + "<" + game.player2.color + ">" + game.player2.getDeaths() + mainColor)
                 )
         )));
 

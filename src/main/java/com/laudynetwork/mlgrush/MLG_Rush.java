@@ -1,15 +1,12 @@
 package com.laudynetwork.mlgrush;
 
-//import com.comphenix.protocol.PacketType;
-//import com.comphenix.protocol.ProtocolLibrary;
-//import com.comphenix.protocol.ProtocolManager;
-//import com.comphenix.protocol.events.ListenerPriority;
-//import com.comphenix.protocol.events.PacketAdapter;
-//import com.comphenix.protocol.events.PacketEvent;
-
 import com.laudynetwork.database.mysql.MySQL;
 import com.laudynetwork.mlgrush.game.Game;
 import com.laudynetwork.mlgrush.listener.*;
+import lombok.Getter;
+import net.megavex.scoreboardlibrary.api.ScoreboardLibrary;
+import net.megavex.scoreboardlibrary.api.exception.NoPacketAdapterAvailableException;
+import net.megavex.scoreboardlibrary.api.noop.NoopScoreboardLibrary;
 import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
 import org.bukkit.GameRule;
@@ -31,6 +28,8 @@ public final class MLG_Rush extends JavaPlugin {
     @Getter
     private SQLConnection sqlConnection;*/
     private MySQL sql;
+    @Getter
+    private ScoreboardLibrary scoreboardLibrary;
 
     public static MLG_Rush get() {
         return instance;
@@ -110,12 +109,19 @@ public final class MLG_Rush extends JavaPlugin {
             }
         });*/
 
+        try {
+            this.scoreboardLibrary = ScoreboardLibrary.loadScoreboardLibrary(this);
+        } catch (NoPacketAdapterAvailableException e) {
+            this.scoreboardLibrary = new NoopScoreboardLibrary();
+        }
+
         game = new Game(sql);
     }
 
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+        scoreboardLibrary.close();
         sql.close();
     }
 
