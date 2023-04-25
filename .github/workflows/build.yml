@@ -17,8 +17,12 @@ jobs:
       uses: actions/setup-java@v2
       with:
         java-version: 17
+        distribution: zulu
     - name: Build with Gradle
       run: ./gradlew shadowJar
+      env:
+        NEXUS_USER: ${{ secrets.NEXUS_USER }}
+        NEXUS_PWD: ${{ secrets.NEXUS_PWD }}
     - name: Upload build artifacts
       uses: actions/upload-artifact@v2
       with:
