@@ -19,7 +19,9 @@ jobs:
         java-version: 17
         distribution: zulu
     - name: Build with Gradle
-      run: ./gradlew shadowJar
+      run: |
+          chmod 777 gradlew
+          ./gradlew shadowJar
       env:
         NEXUS_USER: ${{ secrets.NEXUS_USER }}
         NEXUS_PWD: ${{ secrets.NEXUS_PWD }}
