@@ -15,31 +15,10 @@ public class BlockBreakListener implements Listener {
     public void onBlockBreak(BlockBreakEvent event) {
         Game game = MLG_Rush.get().getGame();
 
-        boolean player1and2bed = game.player2.isPlayerBed(event.getBlock()) && game.player1.isPlayerEqual(event.getPlayer());
-        boolean player2and1bed = game.player1.isPlayerBed(event.getBlock()) && game.player2.isPlayerEqual(event.getPlayer());
-
-        if (player1and2bed || player2and1bed) {
+        if (game.getOpponent(event.getPlayer()).bedMaterial == event.getBlock().getType()) {
             event.setCancelled(true);
 
-            if (player1and2bed) {
-                game.player1.addBedDestroyed();
-
-                game.player1.respawnPlayer();
-                game.player2.respawnPlayer();
-
-                game.player1.getPlayer().playSound(game.player1.getSpawnLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 100, 1);
-                game.player2.getPlayer().playSound(game.player2.getSpawnLocation(), Sound.BLOCK_CONDUIT_DEACTIVATE, 100, 2);
-            } else {
-                game.player2.addBedDestroyed();
-
-                game.player1.respawnPlayer();
-                game.player2.respawnPlayer();
-
-                game.player1.getPlayer().playSound(game.player1.getSpawnLocation(), Sound.BLOCK_CONDUIT_DEACTIVATE, 100, 2);
-                game.player2.getPlayer().playSound(game.player2.getSpawnLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 100, 1);
-            }
-            //game.isRunning = false;
-            game.startNextRound();
+            game.playerDestroyedBed(game.getPlayer(event.getPlayer()));
         } else if (!game.blockPlaced.contains(event.getBlock())) {
             event.setCancelled(true);
         } else {

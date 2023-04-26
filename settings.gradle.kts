@@ -5,4 +5,4 @@ pluginManagement {
     }
 }
 
-rootProject.name = "mlgRush"
+rootProject.name = "MLG-Rush"

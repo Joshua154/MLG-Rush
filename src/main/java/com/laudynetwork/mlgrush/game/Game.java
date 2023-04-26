@@ -45,10 +45,6 @@ public class Game {
     }
 
     public void startMatch() {
-        if (round == 1) {
-            //removeGhostBlocksLoop();
-        }
-
         this.isRunning = true;
         timer.setRunning(true);
 
@@ -184,21 +180,29 @@ public class Game {
         } else return null;
     }
 
+    public void playerDestroyedBed(PlayerManager player) {
+        PlayerManager opponent = getOpponent(player.getPlayer());
+
+        player.respawnPlayer();
+        player.respawnBed();
+
+        opponent.respawnPlayer();
+        opponent.respawnBed();
+
+        player.getPlayer().playSound(player.getSpawnLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 100, 1);
+        opponent.getPlayer().playSound(opponent.getSpawnLocation(), Sound.BLOCK_CONDUIT_DEACTIVATE, 100, 2);
+
+        this.startNextRound();
+    }
+
     public void resetMap() {
         if (blockPlaced.size() == 0) return;
         Collections.reverse(blockPlaced);
 
-        /*for(Block block : blockPlaced) {
-            blockPlacedMaterial.add(block.getType());
-        }*/
-
         for (Block block : blockPlaced) {
-
-
             BlockData blockData = block.getBlockData();
 
             block.setType(Material.AIR);
-
             for (Player player : Bukkit.getOnlinePlayers()) {
                 player.spawnParticle(Particle.BLOCK_DUST, block.getLocation().clone().add(0.5, 0.5, 0.5), 20, blockData);
                 player.playSound(block.getLocation(), Sound.BLOCK_HONEY_BLOCK_BREAK, 1, 1);
@@ -206,8 +210,6 @@ public class Game {
         }
 
         blockPlaced.clear();
-
-        //clearGhostBlocks();
     }
 
     public String getTime() {
@@ -218,17 +220,14 @@ public class Game {
         return round;
     }
 
-    public void clearGhostBlocks() {
-        Iterator var10 = sphere.generateSphere(center, this.radius, false).iterator();
-
-        while (var10.hasNext()) {
-            Location location = (Location) var10.next();
-            Block block = location.getBlock();
-
-            player1.player.sendBlockChange(location, block.getBlockData());
-            player2.player.sendBlockChange(location, block.getBlockData());
-        }
-    }
+//    public void clearGhostBlocks() {
+//        for (Location location : sphere.generateSphere(center, this.radius, false)) {
+//            Block block = location.getBlock();
+//
+//            player1.player.sendBlockChange(location, block.getBlockData());
+//            player2.player.sendBlockChange(location, block.getBlockData());
+//        }
+//    }
 
     public PlayerStats getPlayerStats(Player player) {
         if (player1.player.equals(player)) {
@@ -237,17 +236,4 @@ public class Game {
             return player2Stats;
         } else return null;
     }
-
-    /*public void updateStatus(Player player, PlayerStatus playing) {
-        Document doc = new Document("status", playing.toString());
-
-        MongoManager.getInstance().getDatabase().getCollection("playerData").updateOne(
-                Filters.eq("_id", player.getUniqueId().toString()),
-                new Document("$set", doc)
-        );
-    }*/
-
-    /*public void removeGhostBlocksLoop(){
-        Bukkit.getScheduler().runTaskTimer(MLG_Rush.get(), this::clearGhostBlocks, 20, 20);
-    }*/
 }

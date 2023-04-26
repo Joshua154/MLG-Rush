@@ -89,24 +89,28 @@ public class PlayerManager {
             Bed bed = (Bed) bedMaterial.createBlockData();
             bed.setPart(Bed.Part.FOOT);
             bed.setFacing(BlockFace.EAST);
+            bed.setOccupied(true);
             block.setBlockData(bed);
 
             block = bedLocation.clone().add(1, 0, 0).getBlock();
             bed = (Bed) bedMaterial.createBlockData();
             bed.setPart(Bed.Part.HEAD);
             bed.setFacing(BlockFace.EAST);
+            bed.setOccupied(true);
             block.setBlockData(bed);
         } else {
             Block block = bedLocation.getBlock();
             Bed bed = (Bed) bedMaterial.createBlockData();
             bed.setPart(Bed.Part.FOOT);
             bed.setFacing(BlockFace.WEST);
+            bed.setOccupied(true);
             block.setBlockData(bed);
 
             block = bedLocation.clone().add(-1, 0, 0).getBlock();
             bed = (Bed) bedMaterial.createBlockData();
             bed.setPart(Bed.Part.HEAD);
             bed.setFacing(BlockFace.WEST);
+            bed.setOccupied(true);
             block.setBlockData(bed);
         }
         setupSpawnPlatform();

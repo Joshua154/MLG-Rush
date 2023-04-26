@@ -1,12 +1,5 @@
 package com.laudynetwork.mlgrush;
 
-//import com.comphenix.protocol.PacketType;
-//import com.comphenix.protocol.ProtocolLibrary;
-//import com.comphenix.protocol.ProtocolManager;
-//import com.comphenix.protocol.events.ListenerPriority;
-//import com.comphenix.protocol.events.PacketAdapter;
-//import com.comphenix.protocol.events.PacketEvent;
-
 import com.laudynetwork.mlgrush.game.Game;
 import com.laudynetwork.mlgrush.listener.*;
 import org.bukkit.Bukkit;
@@ -22,9 +15,6 @@ import java.util.Map;
 public final class MLG_Rush extends JavaPlugin {
     private static MLG_Rush instance;
     private final Map<String, String> colors = new HashMap<>();
-    //public Map<Player, LanguageKey> playerLanguages = new HashMap<>();
-    //@Getter
-    //private final Map<LanguageKey, Translation> translations = new HashMap<>();
     Game game;
 
     public static MLG_Rush get() {
@@ -42,13 +32,6 @@ public final class MLG_Rush extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        /*for(LanguageKey languageKey : LanguageKey.values()) {
-            translations.put(languageKey, new Translation("62f196dd49346b5832da6bac", languageKey));
-        }*/
-
-        /*for(Document doc : MongoManager.getInstance().getDatabase().getCollection("colors").find()){
-            colors.put(doc.get("_id").toString(), doc.get("colorCode").toString());
-        }*/
         colors.put("mainColor", "#CCCCCC");
         colors.put("highlight", "#FF4F4F");
         colors.put("MLGRush-Prefix", "&x333AFF&lM&xFFFFFF&lL&xEA302E&lG&x999999-&xf2f2f2&lRush");
@@ -60,7 +43,7 @@ public final class MLG_Rush extends JavaPlugin {
         manager.registerEvents(new BlockPlaceListener(), this);
         manager.registerEvents(new DeathListener(), this);
         manager.registerEvents(new FoodLevelChange(), this);
-        manager.registerEvents(new InteractListener(), this);
+//        manager.registerEvents(new InteractListener(), this);
         manager.registerEvents(new ItemDropListener(), this);
         manager.registerEvents(new JoinListener(), this);
         manager.registerEvents(new LeaveListener(), this);
@@ -81,16 +64,6 @@ public final class MLG_Rush extends JavaPlugin {
         world.setGameRule(GameRule.DISABLE_RAIDS, true);
         world.setGameRule(GameRule.FORGIVE_DEAD_PLAYERS, false);
         world.setDifficulty(Difficulty.HARD);
-
-        /*ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
-        protocolManager.addPacketListener(new PacketAdapter(this, ListenerPriority.NORMAL, PacketType.Play.Server.ENTITY_SOUND) {
-            @Override
-            public void onPacketSending(PacketEvent event) {
-                super.onPacketSending(event);
-
-                System.out.println(event.getPacket());
-            }
-        });*/
 
         game = new Game();
     }
